@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SwitchMenu from './switch/SwitchMenu';
+import ConfigureButton from './ConfigureButton';
 
 const DeviceMenu = ({ deviceId, type, config }) => {
   const [selectedComponent, setSelectedComponent] = useState(null);
@@ -17,7 +18,10 @@ const DeviceMenu = ({ deviceId, type, config }) => {
         {selectedComponent ? (
           <div>{selectedComponent}</div>
         ) : (
-          <SwitchMenu onComponentSelect={handleComponentSelect} config={config} deviceId={updatedDeviceId}/>
+          <div>
+            <SwitchMenu onComponentSelect={handleComponentSelect} config={config} deviceId={updatedDeviceId}/>
+            <ConfigureButton></ConfigureButton>
+          </div>
         )}
       </div>
     </div>

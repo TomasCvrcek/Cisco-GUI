@@ -22,7 +22,7 @@
                 const interfaceName = line.split(' ')[1];
                 interfaces.push(interfaceName);
                 const vlan = vlanByPort[interfaceName];
-                const switchportMode = vlan ? vlan.type : ''; // Assuming vlanByPort now provides type as well
+                const switchportMode = vlan ? vlan.type : '';
                 parsedConfig[interfaceName] = { vlan: vlan ? vlan.number : '', switchportMode };
             }
         });
@@ -30,7 +30,7 @@
         return { parsedConfig, interfaces};
     };
 
-    const generateSwitchConfig = ({initialConfigFile, parsedConfig, deviceId} ) => {
+    const generateSwitchConfig = async ({initialConfigFile, parsedConfig, deviceId} ) => {
       const lines = initialConfigFile.split('\n');
       //const {user} = useAuthContext()
     let newConfig = '';
@@ -54,29 +54,20 @@
             newConfig += `${line}\n`;
         }
     });
-    console.log(newConfig)
-    console.log(deviceId)
-
-    
       if (user) {
         try {
-            axios.put(`http://localhost:5555/devices/${deviceId}`, { configuration: newConfig }, {
+          const response = await axios.put(`http://localhost:5555/devices/${deviceId}`, { configuration: newConfig }, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user.token}`
                 }
             })
-                .then(response => {
-                    console.log('Device configuration updated:', response);
-                })
-                .catch((error) => {
-                    console.error('Error updating device configuration:', error.message);
-                });
+                console.log('Device configuration updated:', response);
         } catch (error) {
             console.error('Error updating device configuration:', error.message);
         }
     }
-
+    console.log('TOTO JE NOVY CONFIG',newConfig)
     return newConfig;
   };
 
