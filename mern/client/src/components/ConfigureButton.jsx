@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios'; 
+import axios from 'axios'; // Import axios for making HTTP requests
 
 const ConfigureButton = ({ mergedConfig }) => {
   const [loading, setLoading] = useState(false);
@@ -10,7 +10,7 @@ const ConfigureButton = ({ mergedConfig }) => {
     setError(null);
 
     // Example endpoint for configuring the device
-    const configureEndpoint = 'http://localhost:5555/brume';
+    const configureEndpoint = 'http://localhost:5555/configure';
 
     // Send a POST request with the merged configuration
     axios.post(configureEndpoint, mergedConfig)

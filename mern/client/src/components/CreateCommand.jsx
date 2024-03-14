@@ -14,7 +14,7 @@ const CreateCommand = () => {
       commandBody: '',
     });
     const {user} = useAuthContext()
-    
+
     const handleIPSubmit = (e) => {
       e.preventDefault();
       setCommandData({
@@ -25,7 +25,7 @@ const CreateCommand = () => {
       });
       setLoading(true);
     };
-  
+
     useEffect(() => {
       console.log(commandData);
       if (loading) {
@@ -49,7 +49,7 @@ const CreateCommand = () => {
       }
     }
     }, [loading, commandData, user]);
-  
+
     return (
       <div className='p-4'>
         <div className='flex justify-between items-center'>
@@ -90,5 +90,5 @@ const CreateCommand = () => {
       </div>
     );
   };
-  
-  export default CreateCommand;
+
+  export default CreateCommand; 

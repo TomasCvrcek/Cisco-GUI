@@ -13,7 +13,6 @@
   import cors from "cors";
 import generalDeviceRoute from "./routes/generalDeviceRoute.js";
 import authRoute from "./routes/authRoute.js";
-import {deviceConnector} from "./connection/connectPort.js"
 
 
 

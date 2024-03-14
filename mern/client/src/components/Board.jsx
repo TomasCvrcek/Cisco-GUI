@@ -76,7 +76,7 @@ const DnDFlow = () => {
     setOriginalEdges((prevEdges) => [...prevEdges, edge]);
   };
 
-  
+
   const addMenuEdge = (edge) => {
     setMenuEdges((prevEdges) => [...prevEdges, edge]);
   };
@@ -126,7 +126,7 @@ const destroyDevice = (id) => {
       position: position,
       configuration: configuration,
     };
-    
+
     console.log('device data', deviceData)
     if(user){
       try {
@@ -157,45 +157,40 @@ const destroyDevice = (id) => {
       }
     }
   }
-    
+
 
 
   //open menu
   const handleNodeDoubleClick = useCallback((event, node) => {
-    
-    if (nodes.some(element => element.id === node.id))
-      {
+    if (nodes.some(element => element.id === node.id)) {
         const newPosition = {
-          x: node.position.x + 200,
-          y: node.position.y
+            x: node.position.x + 200,
+            y: node.position.y
         };
-        if (menuNodes.some(element => element.id === node.id+1)){
-          const updatedMenuNodes = menuNodes.map(element => {
-            if (element.id === node.id+1) {
-                return { ...element, position: newPosition, devicetype: node.devicetype,  };
-            }
-            return element;
-        });
-        setMenuNodes(updatedMenuNodes);
-        }else{
+        if (menuNodes.some(element => element.id === node.id + 1)) {
+            const updatedMenuNodes = menuNodes.map(element => {
+                if (element.id === node.id + 1) {
+                    return { ...element, position: newPosition, devicetype: node.devicetype, configuration: node.configuration };
+                }
+                return element;
+            });
+            setMenuNodes(updatedMenuNodes);
+        } else {
             const newMenuNode = {
-              id: node.id+1,
-              type: 'menuNode',
-              position: newPosition,
-              /*configuration: node.configuration,
-                devicetype: node.devicetype,    tohle prosím pěkně z mně neznámých důvodů nefunguje*/   
-              data: {label:node.data.label + ' menu', configuration: node.configuration,  devicetype: node.devicetype}
-          };
-          console.log(newMenuNode.configuration)
-          setMenuNodes((prevNodes) => prevNodes.concat(newMenuNode));
+                id: node.id + 1,
+                type: 'menuNode',
+                position: newPosition,
+                data: { label: node.data.label + ' menu', configuration: node.configuration, devicetype: node.devicetype }
+            };
+            setMenuNodes((prevNodes) => prevNodes.concat(newMenuNode));
         }
-    } else null
+    } else null;
 }, [nodes, menuNodes]);
 
 
 //get node ID
   const handleNodeClick = useCallback((event, node) => {
-    
+
     setSelectedNodeId(node.id)
     console.log('menu nodes: ', menuNodes)
   }, [menuNodes, nodes]);
@@ -234,7 +229,7 @@ const destroyDevice = (id) => {
     },
     [reactFlowInstance]
   );
-  
+
 
   return (
     <div className="dndflow">

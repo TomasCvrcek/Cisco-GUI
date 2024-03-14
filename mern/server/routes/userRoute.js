@@ -1,6 +1,7 @@
 import express from 'express';
 import  jwt  from "jsonwebtoken";
 import { SECRET } from '../config.js'
+import { scanSerialPorts } from '../connection/connectPort.js';
 
 export const createToken = (_id) =>{
   return jwt.sign({_id}, SECRET, {expiresIn: '3d'})
@@ -125,6 +126,26 @@ router.get('/', async (request, response) => {
     }
   });
 
+
+  router.post('/configure', async (req, res) => {
+  try {
+    // Extract configuration data from the request body
+    const { userMadeConfig } = req.body;
+
+    // Process the configuration (e.g., send commands to the device, update configurations in the database)
+    // Example:
+    // await sendConfigurationToDevice(mergedConfig);
+    // await updateConfigurationInDatabase(mergedConfig);
+
+    // Respond with a success message
+    scanSerialPorts({userMadeConfig: userMadeConfig})
+    res.status(200).json({ message: 'Configuration successful', userMadeConfig  });
+  } catch (error) {
+    // Handle errors
+    console.error('Configuration failed:', error);
+    res.status(500).json({ error: 'Configuration failed' });
+  }
+});
 
     return router;
   }

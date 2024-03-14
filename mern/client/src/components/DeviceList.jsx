@@ -69,4 +69,4 @@ const DeviceList = () => {
     </div>
   );
 };
-export default DeviceList;
+export default DeviceList; 
