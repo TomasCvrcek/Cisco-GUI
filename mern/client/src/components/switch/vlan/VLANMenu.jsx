@@ -48,19 +48,27 @@ const VLANMenu = ({ config, deviceId, onBack }) => {
       console.log(parsedConfig);
       const response = await axios.post('http://localhost:5555/users/configure', { userMadeConfig: parsedConfig });
       console.log('Configuration successful:', response.data);
-      // setLoading(false);
     } catch (error) {
       console.error('Configuration failed:', error);
-      // setError(error.message);
-      // setLoading(false);
     }
   };
 
+  function downloadConfig(textInput) {
+    const filename = 'new_configuration_file'
+
+    var element = document.createElement('a');
+    element.setAttribute('href','data:text/plain;charset=utf-8, ' + encodeURIComponent(textInput));
+    element.setAttribute('download', filename);
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
   return (
-    <div className="vlan-menu">
-      <h3>VLAN Configuration</h3>
-      <button onClick={onBack}>Back</button>
-      <div className="switch-grid">
+    <div className="vlan-menu bg-gray-100 border border-gray-300 p-4 rounded mb-4">
+      <h3 className="text-lg font-semibold mb-4">VLAN Configuration</h3>
+      <button className="mb-4" onClick={onBack}>Back</button>
+      <div className="grid grid-cols-4 gap-4 mb-4">
         {interfaces.map((interfaceName) => (
           <SwitchButton key={interfaceName} port={interfaceName} onClick={handlePortClick} />
         ))}
@@ -68,7 +76,10 @@ const VLANMenu = ({ config, deviceId, onBack }) => {
       <VLANInput onCreateVLAN={handleCreateVLAN} />
       <VLANList vlans={vlans} onSelectVLAN={handleAssignVLAN} />
       <SelectedPortInfo selectedPort={selectedPort} assignedVLAN={vlanByPort[selectedPort]} />
-     { <button onClick={() => configure(parsedConfig)}>configure</button>}
+      <div className="flex justify-between"> {/* Added class for flex */}
+        <button className="btn" onClick={() => configure(parsedConfig)}>Configure</button>
+        <button className="btn" onClick={() => downloadConfig(parsedConfig)}>Download</button>
+      </div>
     </div>
   );
 };

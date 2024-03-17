@@ -10,21 +10,16 @@ const DeviceMenu = ({ deviceId, type, config }) => {
   const updatedDeviceId = deviceId.slice(0, -1)
 
   return (
-    <div className="device-menu">
       <div className="device-menu-content">
-        <h3>Device Configuration</h3>
-        <p>Device ID: {updatedDeviceId}</p>
-        {/* Render the selected component */}
         {selectedComponent ? (
           <div>{selectedComponent}</div>
+          
         ) : (
           <div>
             <SwitchMenu onComponentSelect={handleComponentSelect} config={config} deviceId={updatedDeviceId}/>
-            <ConfigureButton></ConfigureButton>
           </div>
         )}
       </div>
-    </div>
   );
 };
 

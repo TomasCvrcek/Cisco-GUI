@@ -6,29 +6,20 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   Controls,
+  Background,
+
 } from 'reactflow';
 import DeviceMenu from './DeviceMenu';
 import 'reactflow/dist/style.css';
-import '../App.css';
-import '../styles/DeviceMenu.css'
 import { useAuthContext } from '../hooks/useAuthContext';
 
-/*
-const initialEdges = [
-  { id: 'e12', source: '1', target: '2', animated: true },
-  { id: 'e13', source: '1', target: '3', animated: true },
-  { id: 'e22a', source: '2', target: '2a', animated: true },
-  { id: 'e22b', source: '2', target: '2b', animated: true },
-  { id: 'e22c', source: '2', target: '2c', animated: true },
-  { id: 'e2c2d', source: '2c', target: '2d', animated: true },
-];
-*/
-const MenuNode = ({ data, id}) => (
-  <div className="custom-node">
-    <h3>{data.label}</h3>
-    <DeviceMenu deviceId={id} config={data.configuration} type={data.devicetype}/>
+
+const MenuNode = ({ data, id }) => (
+  <div className="switch-menu bg-gray-200 border border-gray-300 p-4 rounded mb-4">
+     <h3 className="text-lg font-semibold">{data.label}</h3>
+     <DeviceMenu deviceId={id} config={data.configuration} type={data.devicetype}/>
   </div>
-);
+ );
 
 
 const nodeTypes = {menuNode: MenuNode };
@@ -112,51 +103,51 @@ const destroyDevice = (id) => {
 }
 
 
-  const makeDevice = (device, model, configuration, event, type, reactFlowInstance) => {
+const makeDevice = (device, model, configuration, event, type, reactFlowInstance) => {
+  const position = reactFlowInstance.screenToFlowPosition({
+    x: event.clientX,
+    y: event.clientY,
+  });
 
-    const position = reactFlowInstance.screenToFlowPosition({
-      x: event.clientX,
-      y: event.clientY,
-    });
+  const deviceData = {
+    device: device,
+    model: model,
+    name: `${device} ${model}`,
+    position: position,
+    configuration: configuration,
+  };
 
-    const deviceData = {
-      device: device,
-      model: model,
-      name: `${device} ${model}`,
-      position: position,
-      configuration: configuration,
-    };
-
-    console.log('device data', deviceData)
-    if(user){
-      try {
-        axios.post('http://localhost:5555/devices', deviceData,{
-          headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${user.token}`
-          }
+  console.log('device data', deviceData)
+  if(user){
+    try {
+      axios.post('http://localhost:5555/devices', deviceData,{
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}`
+        }
       })
-        .then(response => {
-          const newDeviceId = response.data;
-          console.log('New device ID:', response);
-          const newNode = {
-            id: newDeviceId,
-            type,
-            position,
-            data: { label:  `${device} ${model}` },
-          };
+      .then(response => {
+        const newDeviceId = response.data;
+        console.log('New device ID:', response);
+        const newNode = {
+          id: newDeviceId,
+          type,
+          position,
+          data: { label:  `${device} ${model}` },
+        };
 
-          console.log('newNode',newNode)
-          setNodes((nds) =>  nds.concat(newNode));
-        })
-          .catch((error) => {
-            console.error('Error posting device data:', error.message);
-          });
-      } catch (error) {
-        console.error('Error fetching device body:', error.message);
-      }
+        console.log('newNode',newNode)
+        setNodes((nds) =>  nds.concat(newNode));
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error('Error posting device data:', error.message);
+      });
+    } catch (error) {
+      console.error('Error fetching device body:', error.message);
     }
   }
+}
 
 
 
@@ -180,7 +171,7 @@ const destroyDevice = (id) => {
                 id: node.id + 1,
                 type: 'menuNode',
                 position: newPosition,
-                data: { label: node.data.label + ' menu', configuration: node.configuration, devicetype: node.devicetype }
+                data: { label: node.data.label + ' configuration', configuration: node.configuration, devicetype: node.devicetype }
             };
             setMenuNodes((prevNodes) => prevNodes.concat(newMenuNode));
         }
@@ -232,30 +223,33 @@ const destroyDevice = (id) => {
 
 
   return (
-    <div className="dndflow">
-      <ReactFlowProvider>
-        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-          <ReactFlow
-            nodes={[...nodes, ...menuNodes]} 
-            edges={edges}
-            nodeTypes={nodeTypes}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onInit={setReactFlowInstance}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            onNodeDoubleClick={handleNodeDoubleClick}
-            onNodeClick={handleNodeClick}
-            onKeyDown={handleDeleteKeyPress}
-            fitView
-          >
-            <Controls />
-          </ReactFlow>
-        </div>
-      </ReactFlowProvider>
+    <div className="dndflow flex flex-col h-screen">
+       <ReactFlowProvider>
+         <div className="reactflow-wrapper flex-grow h-full">
+           <ReactFlow
+             nodes={[...nodes, ...menuNodes]} 
+             edges={edges}
+             nodeTypes={nodeTypes}
+             onNodesChange={onNodesChange}
+             onEdgesChange={onEdgesChange}
+             onConnect={onConnect}
+             onInit={setReactFlowInstance}
+             onDrop={onDrop}
+             onDragOver={onDragOver}
+             onNodeDoubleClick={handleNodeDoubleClick}
+             onNodeClick={handleNodeClick}
+             onKeyDown={handleDeleteKeyPress}
+             fitView
+           >
+             <Controls />
+              <Background variant="dots" gap={12} size={1} />
+
+
+           </ReactFlow>
+         </div>
+       </ReactFlowProvider>
     </div>
-  );
+   );
 };
 
 export default DnDFlow;

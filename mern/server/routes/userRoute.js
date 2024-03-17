@@ -129,15 +129,7 @@ router.get('/', async (request, response) => {
 
   router.post('/configure', async (req, res) => {
   try {
-    // Extract configuration data from the request body
     const { userMadeConfig } = req.body;
-
-    // Process the configuration (e.g., send commands to the device, update configurations in the database)
-    // Example:
-    // await sendConfigurationToDevice(mergedConfig);
-    // await updateConfigurationInDatabase(mergedConfig);
-
-    // Respond with a success message
     scanSerialPorts({userMadeConfig: userMadeConfig})
     res.status(200).json({ message: 'Configuration successful', userMadeConfig  });
   } catch (error) {
@@ -148,5 +140,5 @@ router.get('/', async (request, response) => {
 });
 
     return router;
-  }
+}
   

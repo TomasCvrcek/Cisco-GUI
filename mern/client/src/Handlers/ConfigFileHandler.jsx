@@ -32,7 +32,6 @@ const ConfigTranslator = ({ configFile, action, vlanByPort, alreadyParsedConfig,
 
   const generateSwitchConfig = async ({initialConfigFile, parsedConfig, deviceId} ) => {
     const lines = initialConfigFile.split('\n');
-    //const {user} = useAuthContext()
   let newConfig = '';
 
   lines.forEach(line => {
@@ -42,7 +41,7 @@ const ConfigTranslator = ({ configFile, action, vlanByPort, alreadyParsedConfig,
           const interfaceConfig = parsedConfig[interfaceName];
 
           if (interfaceConfig) {
-              const vlanLine = interfaceConfig.vlan ? ` switchport access vlan ${interfaceConfig.vlan}` : '';
+              const vlanLine = interfaceConfig.vlan ? ` switchport  ${interfaceConfig.switchportMode} vlan ${interfaceConfig.vlan}` : '';
               const switchportModeLine = interfaceConfig.switchportMode ? ` switchport mode ${interfaceConfig.switchportMode}` : '';
               if (vlanLine || switchportModeLine) {
                 newConfig += `${line}\n${vlanLine}\n${switchportModeLine}\n`;

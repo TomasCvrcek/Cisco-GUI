@@ -1,5 +1,4 @@
 import { SerialPort } from "serialport";
-import { ReadlineParser } from "@serialport/parser-readline";
 
   // scan available ports
   export const scanSerialPorts = ({userMadeConfig}) => {
@@ -13,7 +12,6 @@ import { ReadlineParser } from "@serialport/parser-readline";
             connectToDevice({portPath: port.path, userMadeConfig: userMadeConfig})
           }
         });
-        
       })
       .catch(error => {
         console.error('Error scanning serial ports:', error);
@@ -42,7 +40,7 @@ import { ReadlineParser } from "@serialport/parser-readline";
 
         if (data.includes('\nend')) {
             const bagr = mergeConfigFiles({ currentConfig: runningConfig, userMadeConfig: userMadeConfig });
-            port.write(`\r\nconf t\r\n${bagr}\r\nexit`, error => {
+            port.write(`\r\nen\r\nconf t\r\n${bagr}\r\nexit`, error => {
               if (error) {
                   console.error('Error sending commands:', error);
               } else {
@@ -51,9 +49,6 @@ import { ReadlineParser } from "@serialport/parser-readline";
           });
         }
     });
-    
-    
-    
   };
 
   const mergeConfigFiles = ({ currentConfig, userMadeConfig }) => {
@@ -73,13 +68,11 @@ import { ReadlineParser } from "@serialport/parser-readline";
         if (line.startsWith('interface')) {
             const interfaceName = line.split(' ')[1].trim();
             existingInterfaces.add(interfaceName);
-
-            /*parsedConfig.interfaces.forEach(interf => console.log('Key:', Object.keys(interf)[0]));*/
             const interfaceConfig = parsedConfig.interfaces.find(interf => Object.keys(interf)[0] === interfaceName);
 
             if (interfaceConfig) {
                 const interfaceProps = interfaceConfig[interfaceName];
-                const vlanLine = interfaceProps.vlan ? ` switchport access vlan ${interfaceProps.vlan}` : '';
+                const vlanLine = interfaceProps.vlan ? ` switchport ${interfaceProps.switchportMode} vlan ${interfaceProps.vlan}` : '';
                 const switchportModeLine = interfaceProps.switchportMode ? ` switchport mode ${interfaceProps.switchportMode}` : '';
                 if (vlanLine || switchportModeLine) {
                     newConfig += `${line}\n${vlanLine}\n${switchportModeLine}\n`;
@@ -103,7 +96,7 @@ import { ReadlineParser } from "@serialport/parser-readline";
   const parseConfig = (config) => {
     let parsedConfig = { hostname: '', interfaces: [] };
     let currentInterface = null;
-    let interfaceName = null; // Define interfaceName outside the block
+    let interfaceName = null;
 
     const lines = config.split('\n');
     lines.forEach(line => {
@@ -112,7 +105,7 @@ import { ReadlineParser } from "@serialport/parser-readline";
             parsedConfig.hostname = hostname;
         }
         if (line.startsWith('interface')) {
-            interfaceName = line.split(' ')[1]; // Assign interfaceName here
+            interfaceName = line.split(' ')[1];
             currentInterface = { [interfaceName]: {} };
             parsedConfig.interfaces.push(currentInterface);
         }
@@ -123,7 +116,6 @@ import { ReadlineParser } from "@serialport/parser-readline";
         if (currentInterface && line.includes('switchport mode')) {
             const switchportMode = line.split(' ')[3];
             currentInterface[interfaceName].switchportMode = switchportMode;
-            //console.log(currentInterface[interfaceName])
         }
 
     });

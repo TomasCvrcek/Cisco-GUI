@@ -10,7 +10,13 @@ const VLANInput = ({ onCreateVLAN }) => {
   };
 
   const handleNumberChange = (event) => {
-    setVlanNumber(event.target.value);
+    const number = parseInt(event.target.value);
+    if (number >= 1) {
+      setVlanNumber(number);
+    } else {
+      // Display an error message or handle the invalid input
+      // For now, just ignore the input
+    }
   };
 
   const handleTypeChange = (event) => {
@@ -18,7 +24,7 @@ const VLANInput = ({ onCreateVLAN }) => {
   };
 
   const handleCreateVLAN = () => {
-    if (vlanName.trim() === '' || vlanNumber.trim() === '') {
+    if (vlanName.trim() === '' || vlanNumber === '') {
       alert('Please enter both VLAN name and number.');
       return;
     }
@@ -31,16 +37,16 @@ const VLANInput = ({ onCreateVLAN }) => {
 
   return (
     <div className="vlan-input">
-      <label>VLAN Name:</label>
-      <input type="text" value={vlanName} onChange={handleNameChange} placeholder="Enter VLAN name" />
-      <label>VLAN Number:</label>
-      <input type="number" value={vlanNumber} onChange={handleNumberChange} placeholder="Enter VLAN number" />
-      <label>VLAN Type:</label>
+      <label className="block mb-2">VLAN Name:</label>
+      <input className="input" type="text" value={vlanName} onChange={handleNameChange} placeholder="Enter VLAN name" />
+      <label className="block mb-2">VLAN Number:</label>
+      <input className="input" type="number" value={vlanNumber} onChange={handleNumberChange} placeholder="Enter VLAN number" />
+      <label className="block mb-2">VLAN Type:</label>
       <select value={vlanType} onChange={handleTypeChange}>
         <option value="access">Access</option>
         <option value="trunk">Trunk</option>
       </select>
-      <button onClick={handleCreateVLAN}>Create VLAN</button>
+      <button className="btn" onClick={handleCreateVLAN}>Create VLAN</button>
     </div>
   );
 };
